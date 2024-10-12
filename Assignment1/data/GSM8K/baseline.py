@@ -99,8 +99,28 @@ with open('test.jsonl', 'r', encoding="utf-8") as f, open('zeroshot.baseline.jso
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            print("Sleeping for 30 seconds...")
-            time.sleep(30)
+            print("Sleeping for 10 seconds...")
+            time.sleep(10)
+            completion = client.chat.completions.create(
+                model="Meta-Llama-3.1-8B-Instruct",
+                messages=zero_shot_prompt,
+                stream=True
+            )
+            full_response = ""
+            for chunk in completion:
+                delta = chunk.choices[0].delta
+                if hasattr(delta, 'content'):
+                    full_response += delta.content
+            total_num += 1
+            output_data = {
+                "question": data['question'],
+                "answer": full_response
+            }
+            output_file.write(json.dumps(output_data) + "\n")
+            if acc_eval(full_response, data['answer'], acc_num, total_num):
+                acc_num+=1
+            time_random += 1
+            time.sleep(0.5)
 
 
 #zero_shot_prompt = nshot_chats(n=0, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")
