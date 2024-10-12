@@ -50,11 +50,34 @@ def extract_ans_from_response(answer: str, eos=None):
     except ValueError:
         return answer
 
+def convert(output:str):
+    output = re.findall('-?\d+(?:\.\d+)?(?:/\d+)?', output)[0]
+    output = delete_extra_zero(output)
+    output=int(output)
+    return output
+
+def acc_eval(output:str,ans:str, acc_num:int, total_num:int):
+    output= extract_ans_from_response(output)
+    if type(output) == str:
+        output = convert(output)
+    ans= extract_ans_from_response(ans)
+    if type(ans) == str:
+        ans = convert(ans)
+    print(ans, "-", output,end="  ")
+    if ans == output:
+        print((acc_num+1)/total_num)
+        return True
+    else:
+        print(acc_num/total_num)
+        return False
 
 
-if __name__ == '__main__':
-    test_solution = "Anna has 2 more apples than Elsa. So Anna has 2 + 5 = 7 apples. Elsa and Anna have 5 + 7 = 12 apples together. #### 12 apples"
-    answer = extract_ans_from_response(test_solution)
-    answer = re.findall('-?\d+(?:\.\d+)?(?:/\d+)?', answer)[0]
-    answer = delete_extra_zero(answer)
-    print(answer)
+
+
+# if __name__ == '__main__':
+    # test_solution = "Anna has 2 more apples than Elsa. So Anna has 2 + 5 = 7 apples. Elsa and Anna have 5 + 7 = 12 apples together. #### 12 apples"
+    # answer = extract_ans_from_response(test_solution)
+    # answer = re.findall('-?\d+(?:\.\d+)?(?:/\d+)?', answer)[0]
+    # answer = delete_extra_zero(answer)
+    # answer = int(answer)
+    # print(type(answer))

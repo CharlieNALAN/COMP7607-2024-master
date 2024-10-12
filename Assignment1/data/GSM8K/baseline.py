@@ -1,4 +1,9 @@
+import json
+import time
 
+from openai import OpenAI
+
+from evaluation import acc_eval
 
 gsm8k_nshots = [
     (
@@ -56,7 +61,48 @@ def nshot_chats(n: int, question: str) -> dict:
     chats.append({"role": "user", "content": question_prompt(question)})
     return chats
 
+time_random = 0
+acc_num=0
+total_num=0
 
-zero_shot_prompt = nshot_chats(n=0, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")
+client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
+with open('test.jsonl', 'r', encoding="utf-8") as f, open('zeroshot.baseline.jsonl', 'w', encoding="utf-8") as output_file:
+    for line in f:
+        try:
+            data = json.loads(line)
+            zero_shot_prompt = nshot_chats(n=0, question=data['question'])
+            completion = client.chat.completions.create(
+                model="Meta-Llama-3.1-8B-Instruct",
+                messages=zero_shot_prompt,
+                stream=True
+            )
+            full_response = ""
+            for chunk in completion:
+                delta = chunk.choices[0].delta
+                if hasattr(delta, 'content'):
+                    full_response += delta.content
+            total_num += 1
+            output_data = {
+                "question": data['question'],
+                "answer": full_response
+            }
+            output_file.write(json.dumps(output_data) + "\n")
 
-few_shot_prompt = nshot_chats(n=8, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")  # todo: n is the number of demonstrations
+            if acc_eval(full_response, data['answer'], acc_num, total_num):
+                acc_num+=1
+            time_random += 1
+            time.sleep(0.5)
+            if time_random == 10:
+                print("Suspend for a little while")
+                time_random = 0
+                time.sleep(5)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            print("Sleeping for 30 seconds...")
+            time.sleep(30)
+
+
+#zero_shot_prompt = nshot_chats(n=0, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")
+
+#few_shot_prompt = nshot_chats(n=8, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")  # todo: n is the number of demonstrations
