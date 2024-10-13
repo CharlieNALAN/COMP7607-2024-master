@@ -56,6 +56,7 @@ def extract_ans_from_response(answer: str, eos=None):
 
 # convert output to str() and modify it
 def convert(output:str):
+    output = extract_ans_from_response(output)
     output = str(output)
     output = re.findall('-?\d+(?:\.\d+)?(?:/\d+)?', output)[0]
     output = delete_extra_zero(output)
@@ -65,9 +66,9 @@ def convert(output:str):
 def acc_eval(output:str,ans:str, acc_num:int, total_num:int, default = True):
     if default:
         print("No.",total_num,sep="",end=":")
-    output= extract_ans_from_response(output)
+    # output= extract_ans_from_response(output)
     output = convert(output)
-    ans= extract_ans_from_response(ans)
+    # ans= extract_ans_from_response(ans)
     ans = convert(ans)
     if default:
         print(ans, "-", output,end="  ")
