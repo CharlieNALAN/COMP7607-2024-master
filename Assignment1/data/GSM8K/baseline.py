@@ -1,9 +1,11 @@
 import json
 import time
 
+import tiktoken
 from openai import OpenAI
-
+from tiktoken import encoding_for_model
 from evaluation import acc_eval
+# from transformers import LlamaTokenizer
 
 gsm8k_nshots = [
     (
@@ -64,32 +66,56 @@ def nshot_chats(n: int, question: str) -> dict:
 time_random = 0
 acc_num=0
 total_num=0
-
+total_time = 0
+total_prompt_tokens=0
+total_completion_tokens=0
+total_tokens = 0
 client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-with open('test.jsonl', 'r', encoding="utf-8") as f, open('zeroshot.baseline.jsonl', 'w', encoding="utf-8") as output_file:
-    for line in f:
+with open('test.jsonl', 'r', encoding="utf-8") as f, open('fewshot.baseline.jsonl', 'a', encoding="utf-8") as output_file:
+    # for line in f:
+    for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
+        if line_number < 990:
+            continue
         try:
             data = json.loads(line)
-            zero_shot_prompt = nshot_chats(n=0, question=data['question'])
+            # zero_shot_prompt = nshot_chats(n=0, question=data['question'])  # zero-shot
+            few_shot_prompt = nshot_chats(n=8, question=data['question'])  # few-shot
             completion = client.chat.completions.create(
                 model="Meta-Llama-3.1-8B-Instruct",
-                messages=zero_shot_prompt,
-                stream=True
+                messages=few_shot_prompt,
+                stream=True,
+                stream_options = {"include_usage": True}
             )
             full_response = ""
             for chunk in completion:
+                if chunk.usage is not None:
+                    total_prompt_tokens += chunk.usage.prompt_tokens
+                    total_completion_tokens += chunk.usage.completion_tokens
+                    total_tokens += chunk.usage.total_tokens
+                    total_time +=chunk.usage.model_extra['total_latency']
+                    prompt_tokens = chunk.usage.prompt_tokens
+                    completion_tokens = chunk.usage.completion_tokens
+                    current_tokens = chunk.usage.total_tokens
+                    time_latency = chunk.usage.model_extra['total_latency']
+                    break
                 delta = chunk.choices[0].delta
                 if hasattr(delta, 'content'):
                     full_response += delta.content
-            total_num += 1
+            total_num +=1
             output_data = {
                 "question": data['question'],
-                "answer": full_response
+                "answer": full_response,
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": current_tokens,
+                "time": time_latency
             }
             output_file.write(json.dumps(output_data) + "\n")
 
             if acc_eval(full_response, data['answer'], acc_num, total_num):
                 acc_num+=1
+            print(f"total_time:{total_time:.4f}",end="   ")
+            print(f"Total_prompt_tokens:{total_prompt_tokens}, total_completion_tokens:{total_completion_tokens}, total_tokens:{total_tokens}")
             time_random += 1
             time.sleep(0.5)
             if time_random == 10:
@@ -103,26 +129,58 @@ with open('test.jsonl', 'r', encoding="utf-8") as f, open('zeroshot.baseline.jso
             time.sleep(10)
             completion = client.chat.completions.create(
                 model="Meta-Llama-3.1-8B-Instruct",
-                messages=zero_shot_prompt,
+                messages=few_shot_prompt,
                 stream=True
             )
             full_response = ""
             for chunk in completion:
+                if chunk.usage is not None:
+                    total_prompt_tokens += chunk.usage.prompt_tokens
+                    total_completion_tokens += chunk.usage.completion_tokens
+                    total_tokens += chunk.usage.total_tokens
+                    total_time +=chunk.usage.model_extra['total_latency']
+                    prompt_tokens = chunk.usage.prompt_tokens
+                    completion_tokens = chunk.usage.completion_tokens
+                    current_tokens = chunk.usage.total_tokens
+                    time_latency = chunk.usage.model_extra['total_latency']
+                    break
                 delta = chunk.choices[0].delta
                 if hasattr(delta, 'content'):
                     full_response += delta.content
             total_num += 1
             output_data = {
                 "question": data['question'],
-                "answer": full_response
+                "answer": full_response,
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": current_tokens,
+                "time": time_latency
             }
             output_file.write(json.dumps(output_data) + "\n")
             if acc_eval(full_response, data['answer'], acc_num, total_num):
                 acc_num+=1
+            print(f"total_time:{total_time:.4f}",end="   ")
+            print(f"Total_prompt_tokens:{total_prompt_tokens}, total_completion_tokens:{total_completion_tokens}, total_tokens:{total_tokens}")
             time_random += 1
             time.sleep(0.5)
 
+# Calculate averages
+average_time_per_question = total_time / total_num
+average_total_tokens_per_question = total_tokens / total_num
+average_completion_tokens_per_question = total_completion_tokens / total_num
+average_prompt_tokens_per_question = total_prompt_tokens / total_num
 
+print(f"Average Wall-Clock Time per Question: {average_time_per_question:.4f} seconds")
+print(f"Average Number of Total Tokens per Question: {average_total_tokens_per_question:.4f}")
+print(f"Average Number of Completion Tokens per Question: {average_completion_tokens_per_question:.4f}")
+print(f"Average Number of Prompt Tokens per Question: {average_prompt_tokens_per_question:.4f}")
+with open('zeroshot_inference.txt', 'w', encoding='utf-8') as result_file:
+    result_file.write(f"Average Wall-Clock Time per Question: {average_time_per_question:.4f} seconds\n")
+    result_file.write(f"Average Number of Total Tokens per Question: {average_total_tokens_per_question:.4f}\n")
+    result_file.write(f"Average Number of Completion Tokens per Question: {average_completion_tokens_per_question:.4f}\n")
+    result_file.write(f"Average Number of Prompt Tokens per Question: {average_prompt_tokens_per_question:.4f}\n")
+
+print("Results have been written to inference_costs.txt")
 #zero_shot_prompt = nshot_chats(n=0, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")
 
 #few_shot_prompt = nshot_chats(n=8, question="Elsa has 5 apples. Anna has 2 more apples than Elsa. How many apples do they have together?")  # todo: n is the number of demonstrations
