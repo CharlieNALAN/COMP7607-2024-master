@@ -69,10 +69,10 @@ total_tokens=0
 total_time=0
 
 client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encoding="utf-8") as output_file:
+with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP_fewshot.jsonl', 'a', encoding="utf-8") as output_file:
     # for line in f:
     for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
-        if line_number < 272:
+        if line_number < 744:
             continue
         total_num+=1
 
@@ -82,7 +82,7 @@ with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encodi
         cur_time_latency = 0
 
         data=json.loads(line)
-        zero_shot_prompt = nshot_chats(n=0,question=data['question'])
+        zero_shot_prompt = nshot_chats(n=8,question=data['question'])
 
         try:
             full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
@@ -98,6 +98,15 @@ with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encodi
         cur_time_latency +=time_latency
         ans1 = convert(full_response)
         print(ans1,end="-")
+        # output_data = {
+        #     "question": data['question'],
+        #     "answer": full_response,
+        #     "prompt_tokens": cur_prompt_tokens,
+        #     "completion_tokens": cur_completion_tokens,
+        #     "total_tokens": cur_tokens,
+        #     "time": cur_time_latency
+        # }
+        # output_file.write(json.dumps(output_data) + "\n")
 
         try:
             new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,1)
@@ -111,7 +120,7 @@ with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encodi
         cur_completion_tokens +=completion_tokens
         cur_tokens +=current_tokens
         cur_time_latency +=time_latency
-        zero_shot_prompt = nshot_chats(n=0,question=new_problem)
+        zero_shot_prompt = nshot_chats(n=8,question=new_problem)
 
         try:
             full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
@@ -152,7 +161,7 @@ with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encodi
                 print("Sleeping for 20 seconds...")
                 time.sleep(20)
                 new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,2)
-            zero_shot_prompt = nshot_chats(n=0,question=new_problem)
+            zero_shot_prompt = nshot_chats(n=8,question=new_problem)
             cur_prompt_tokens +=prompt_tokens
             cur_completion_tokens +=completion_tokens
             cur_tokens +=current_tokens

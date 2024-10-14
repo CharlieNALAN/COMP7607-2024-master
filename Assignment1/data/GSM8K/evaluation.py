@@ -95,7 +95,7 @@ def read_and_compare(file1, file2):
         percentage = (acc_num / total_num) * 100
         formatted_output = f"{percentage:.6f}%"
         print("The overall accuracy of zero shot baseline is:",formatted_output)
-    with open("fewshot_inference.txt","a",encoding='utf-8') as f:
+    with open("SP_interference.txt","a",encoding='utf-8') as f:
         f.write(f"The overall accuracy of baseline is:{formatted_output}\n")
 
 def token_and_time_eval(file):
@@ -119,7 +119,7 @@ def token_and_time_eval(file):
     avg_total_token = total_tokens/total_num
     print(f"avg_prompt_tokens:{avg_prompt_time}, avg_completion_tokens:{avg_completion_time}, avg_total_token:{avg_total_token}, avg_total_time:{avg_time}")
 
-    with open('fewshot_inference.txt', 'a', encoding='utf-8') as result_file:
+    with open('SP_interference.txt', 'a', encoding='utf-8') as result_file:
         result_file.write(f"Average Wall-Clock Time per Question: {avg_time:.4f} seconds\n")
         result_file.write(f"Average Number of Total Tokens per Question: {avg_total_token:.4f}\n")
         result_file.write(f"Average Number of Completion Tokens per Question: {avg_completion_time:.4f}\n")
@@ -131,8 +131,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('fewshot.baseline.jsonl','test.jsonl')
-    token_and_time_eval('fewshot.baseline.jsonl')
+    read_and_compare('SP.jsonl','test.jsonl')
+    token_and_time_eval('SP.jsonl')
 
 
 # if __name__ == '__main__':
