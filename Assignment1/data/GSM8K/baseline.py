@@ -51,7 +51,7 @@ def nshot_chats(n: int, question: str) -> dict:
         return f"Answer:\nLet's think step by step.\n{s}"
 
     chats = [
-        {"role": "system", "content": "Your task is to solve a series of math word problems by providing the final answer. Use the format #### [value] to highlight your answer. For example, if the answer is 560, you should write #### 560."}
+        {"role": "system", "content": "Your task is to solve a series of math word problems by providing the final answer. Use the format #### [value] to highlight your answer. For example, if the answer is 560, you should write #### 560. Make sure there always an #### [value] at the end, and don't add any extra things behind ####, just the answer number"}
     ]
 
     for q, a in gsm8k_nshots[:n]:

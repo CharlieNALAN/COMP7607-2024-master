@@ -28,10 +28,15 @@ def request(client,msg ):
     time.sleep(0.3)
     return full_response,prompt_tokens,completion_tokens,current_tokens,time_latency
 
-system_prompt_content=[
-    "Please rewrite new versions of the original mathematical question to be more understandable and easy to answer. Don't omit any useful information, especially the numbers, and please maintain their original meaning when polysemous words appear. Just output the new question end with ? don't give me answer",
-    "Please rewrite new versions of the original mathematical question to be more understandable and easy to answer. Don't omit any useful information, especially the numbers, and please maintain their original meaning when polysemous words appear, and try to reorder conditions. Just output the new question end with ? don't give me answer"
+# system_prompt_content=[
+#     "Please rewrite new versions of the original mathematical question to be more understandable and easy to answer. Don't omit any useful information, especially the numbers, and please maintain their original meaning when polysemous words appear. Just output the new question end with ? don't give me answer",
+#     "Please rewrite new versions of the original mathematical question to be more understandable and easy to answer. Don't omit any useful information, especially the numbers, and please maintain their original meaning when polysemous words appear, and try to reorder conditions. Just output the new question end with ? don't give me answer"
+# ]
+system_prompt_content = [
+    "Please rewrite the following mathematical question to be more understandable and easy to answer. Ensure all numbers and key information are retained, and maintain the original meaning. Just output the new question, do not provide the answer.",
+    "Please rewrite the following mathematical question to be more understandable and easy to answer. Ensure key information are retained, maintain the original meaning, and try to reorder conditions for clarity. Just output the new question, do not provide the answer."
 ]
+
 
 def generate_one_new_question(question, client , times):
 
@@ -71,11 +76,11 @@ if __name__ == '__main__':
     total_time=0
 
     client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP_fewshot.jsonl', 'a', encoding="utf-8") as output_file:
-        for line in f:
-        # for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
-        #     if line_number < 1218:
-        #         continue
+    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP_fewshot_prompt_improved_v1.jsonl', 'a', encoding="utf-8") as output_file:
+        # for line in f:
+        for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
+            if line_number < 1098:
+                continue
             total_num+=1
 
             cur_prompt_tokens = 0

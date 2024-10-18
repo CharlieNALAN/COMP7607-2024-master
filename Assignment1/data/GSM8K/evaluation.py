@@ -131,8 +131,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('SP_fewshot.jsonl','test.jsonl')
-    token_and_time_eval('SP_fewshot.jsonl')
+    read_and_compare('SP_fewshot_prompt_improved_v1.jsonl','test.jsonl')
+    token_and_time_eval('SP_fewshot_prompt_improved_v1.jsonl')
 
 
 # if __name__ == '__main__':
