@@ -43,27 +43,27 @@ gsm8k_nshots = [
 ]
 
 gsm8k_learning = [
-    # (
-    #     '9980+29=',
-    #     'Target:\n<scratch>\n9 9 8 0 + 2 9 , C: 0\n9 9 8 + 2 , 9 C: 0\n9 9 , 0 9 C: 1\n9 , 0 0 9 C: 1\n, 0 0 0 9 C: 1\n1 0 0 0 9\n</scratch>1 0 0 0 9.'
-    # ),
-    # (
-    #     '9980+29=',
-    #     'Explanation:\n'
-    #     'The first number is 9980, FN=[9,9,8,0]. The second number is 29, SN=[2,9]. Since FN [9,9,8,0] has 4 digits, SN [2,9] has 2 digits, thus the maximum number of digits is 4. In each subsequent step, we remove one number from the end of FN and one from the end of SN. Length of FN is 4. FN=[9,9,8,0]. Length of SN is 2. SN=[2,9]. FN[4]=0. SN[4]=9. C[4]=0. Since 0+9+0=9, 9<10, 9%10=9. Length of A is 1. Thus A=[9]. Since (9-9)/10=0, C[3]=0. Length of FN is 3. FN=[9,9,8]. Length of SN is 1. SN=[2]. FN[3]=8. SN[3]=2. C[3]=0. Since 8+2+0=10, 10=10, 10%10=0. Length of A is 2. Thus A=[0,9]. Since (10-0)/10=1, C[2]=1. Length of FN is 2. FN=[9,9]. Length of SN is 0. SN=[]. FN[2]=9. SN is empty. C[2]=1. Since 9+0+1=10, 10=10, 10%10=0. Length of A is 3. Thus A=[0,0,9]. Since (10-0)/10=1, C[1]=1. Length of FN is 1. FN=[9]. Length of SN is 0. SN=[]. FN[1]=9. SN is empty. C[1]=1. Since 9+0+1=10, 10=10, 10%10=0. Length of A is 4. Thus A=[0,0,0,9]. Since (10-0)/10=1, C[0]=1. There are no more digits, but C[0]=1. Length of A is 5. Thus A=[1,0,0,0,9]. The final Answer is [1,0,0,0,9].'
-    # ),
-    # (
-    #     '802+7145=',
-    #     'Explanation:\n'
-    #     'The first number is 802, FN=[8,0,2]. The second number is 7145, SN=[7,1,4,5]. Since FN=[8,0,2] has 3 digits, SN=[7,1,4,5] has 4 digits, thus the maximum number of digits is 4. In each subsequent step, we remove one number from the end of FN and one from the end of SN. Length of FN is 3. FN=[8,0,2]. Length of SN is 4. SN=[7,1,4,5]. FN[4]=2. SN[4]=5. C[4]=0. Since 2+5+0=7, 7<10, 7%10=7. Length of A is 1. Thus A=[7]. Since (7-7)/10=0, C[3]=0. Length of FN is 2. FN=[8,0]. Length of SN is 3. SN=[7,1,4]. FN[3]=0. SN[3]=4. C[3]=0. Since 0+4+0=4, 4<10, 4%10=4. Length of A is 2. Thus A=[4,7]. Since (4-4)/10=0, C[2]=0. Length of FN is 1. FN=[8]. Length of SN is 2. SN=[7,1]. FN[2]=8. SN[2]=1. C[2]=0. Since 8+1+0=9, 9<10, 9%10=9. Length of A is 3. Thus A=[9,4,7]. Since (9-9)/10=0, C[1]=0. Length of FN is 0. FN=[]. Length of SN is 1. SN=[7]. FN is empty. SN[1]=7. C[1]=0. Since 0+7+0=7, 7<10, 7%10=7. Length of A is 4. Thus A=[7,9,4,7]. Since (7-7)/10=0, C[0]=0. There are no more digits and C[0]=0. Thus the process is complete. Since there are no more operators, the problem is complete. The final Answer is [7,9,4,7].'
-    # ),
-    # (
-    #     '483-389=',
-    #     'Explanation:\n'
-    #     'The first number is 483, adding commas between each number, FN=[4,8,3]. The second number is -389, adding commas between each number, SN=-[3,8,9]. FN [4,8,3] has 3 digits, SN -[3,8,9] has digits, max is 3.\n'
-    #     'Len(FN)=3. FN=[4,8,3]. FN[3]=3. Len(SN)=3. SN=-[3,8,9]. SN[3]=-9. C[3]=0. Since 3-9+0=-6, -6<-10, -6%-10=-6. Len(A)=1. A=[-6]. Since (-6--6)/10=0, C[2]=0. Len(FN)=2. FN=[4,8]. FN[2]=8. Len(SN)=2. SN=-[3,8]. SN[2]=-8. C[2]=0. Since 8-8+0=0, 0<10, 0%10=0. Len(A)=2. A=[0,-6]. Since (0-0)/10=0, C[1]=0. Len(FN)=1. FN=[4]. FN[1]=4. Len(SN)=1. SN=-[3]. SN[1]=-3. C[1]=0. Since 4-3+0=1, 1<10, 1%10=1. Len(A)=3. A=[1,0,-6]. Since (1-1)/10=0, C[0]=0. Len(FN)=0. FN=[]. FN[0]=empty. Len(SN)=0. SN=-[]. SN[0]=empty. Since both FN and SN are empty, next. Since C[0]=0, the steps are done. Since there are - in A, we check the sign of the last step A[1]=1. Since 1 is non-neg, we process A from right to left. A=[1,0,-6]=[+1,+0,-6]. C[3]=0.'
-    #     'Len(A)=3. A=[+1,+0,-6]. A[3]=-6. Since -6<0, B=10, C[2]=-1. Since C[3]=0, thus -6+10+0=4. Len(ANEW)=1. ANEW=[4]. C[2]=-1. Len(A)=2. A=[+1,+0]. A[2]=+0. Since +0 is 0, B=0, C[1]=0. Since C[2]=-1, thus 0+0-1=-1, which is neg, thus repeat with B=10, C[1]=-1. -1+10+0=9. Len(ANEW)=2. ANEW=[9,4]. C[1]=-1. Len(A)=1. A=[+1]. A[1]=+1. Since +1>0, B=0, C[0]=0. Since C[1]=-1, thus 1+0-1=0. Len(ANEW)=3. ANEW=[0,9,4]. C[0]=0. Len(A)=0. A=[]. Since A is empty, the problem is complete. The final Answer is [0,9,4].'
-    # ),
+    (
+        '9980+29=',
+        'Target:\n<scratch>\n9 9 8 0 + 2 9 , C: 0\n9 9 8 + 2 , 9 C: 0\n9 9 , 0 9 C: 1\n9 , 0 0 9 C: 1\n, 0 0 0 9 C: 1\n1 0 0 0 9\n</scratch>1 0 0 0 9.'
+    ),
+    (
+        '9980+29=',
+        'Explanation:\n'
+        'The first number is 9980, FN=[9,9,8,0]. The second number is 29, SN=[2,9]. Since FN [9,9,8,0] has 4 digits, SN [2,9] has 2 digits, thus the maximum number of digits is 4. In each subsequent step, we remove one number from the end of FN and one from the end of SN. Length of FN is 4. FN=[9,9,8,0]. Length of SN is 2. SN=[2,9]. FN[4]=0. SN[4]=9. C[4]=0. Since 0+9+0=9, 9<10, 9%10=9. Length of A is 1. Thus A=[9]. Since (9-9)/10=0, C[3]=0. Length of FN is 3. FN=[9,9,8]. Length of SN is 1. SN=[2]. FN[3]=8. SN[3]=2. C[3]=0. Since 8+2+0=10, 10=10, 10%10=0. Length of A is 2. Thus A=[0,9]. Since (10-0)/10=1, C[2]=1. Length of FN is 2. FN=[9,9]. Length of SN is 0. SN=[]. FN[2]=9. SN is empty. C[2]=1. Since 9+0+1=10, 10=10, 10%10=0. Length of A is 3. Thus A=[0,0,9]. Since (10-0)/10=1, C[1]=1. Length of FN is 1. FN=[9]. Length of SN is 0. SN=[]. FN[1]=9. SN is empty. C[1]=1. Since 9+0+1=10, 10=10, 10%10=0. Length of A is 4. Thus A=[0,0,0,9]. Since (10-0)/10=1, C[0]=1. There are no more digits, but C[0]=1. Length of A is 5. Thus A=[1,0,0,0,9]. The final Answer is [1,0,0,0,9].'
+    ),
+    (
+        '802+7145=',
+        'Explanation:\n'
+        'The first number is 802, FN=[8,0,2]. The second number is 7145, SN=[7,1,4,5]. Since FN=[8,0,2] has 3 digits, SN=[7,1,4,5] has 4 digits, thus the maximum number of digits is 4. In each subsequent step, we remove one number from the end of FN and one from the end of SN. Length of FN is 3. FN=[8,0,2]. Length of SN is 4. SN=[7,1,4,5]. FN[4]=2. SN[4]=5. C[4]=0. Since 2+5+0=7, 7<10, 7%10=7. Length of A is 1. Thus A=[7]. Since (7-7)/10=0, C[3]=0. Length of FN is 2. FN=[8,0]. Length of SN is 3. SN=[7,1,4]. FN[3]=0. SN[3]=4. C[3]=0. Since 0+4+0=4, 4<10, 4%10=4. Length of A is 2. Thus A=[4,7]. Since (4-4)/10=0, C[2]=0. Length of FN is 1. FN=[8]. Length of SN is 2. SN=[7,1]. FN[2]=8. SN[2]=1. C[2]=0. Since 8+1+0=9, 9<10, 9%10=9. Length of A is 3. Thus A=[9,4,7]. Since (9-9)/10=0, C[1]=0. Length of FN is 0. FN=[]. Length of SN is 1. SN=[7]. FN is empty. SN[1]=7. C[1]=0. Since 0+7+0=7, 7<10, 7%10=7. Length of A is 4. Thus A=[7,9,4,7]. Since (7-7)/10=0, C[0]=0. There are no more digits and C[0]=0. Thus the process is complete. Since there are no more operators, the problem is complete. The final Answer is [7,9,4,7].'
+    ),
+    (
+        '483-389=',
+        'Explanation:\n'
+        'The first number is 483, adding commas between each number, FN=[4,8,3]. The second number is -389, adding commas between each number, SN=-[3,8,9]. FN [4,8,3] has 3 digits, SN -[3,8,9] has digits, max is 3.\n'
+        'Len(FN)=3. FN=[4,8,3]. FN[3]=3. Len(SN)=3. SN=-[3,8,9]. SN[3]=-9. C[3]=0. Since 3-9+0=-6, -6<-10, -6%-10=-6. Len(A)=1. A=[-6]. Since (-6--6)/10=0, C[2]=0. Len(FN)=2. FN=[4,8]. FN[2]=8. Len(SN)=2. SN=-[3,8]. SN[2]=-8. C[2]=0. Since 8-8+0=0, 0<10, 0%10=0. Len(A)=2. A=[0,-6]. Since (0-0)/10=0, C[1]=0. Len(FN)=1. FN=[4]. FN[1]=4. Len(SN)=1. SN=-[3]. SN[1]=-3. C[1]=0. Since 4-3+0=1, 1<10, 1%10=1. Len(A)=3. A=[1,0,-6]. Since (1-1)/10=0, C[0]=0. Len(FN)=0. FN=[]. FN[0]=empty. Len(SN)=0. SN=-[]. SN[0]=empty. Since both FN and SN are empty, next. Since C[0]=0, the steps are done. Since there are - in A, we check the sign of the last step A[1]=1. Since 1 is non-neg, we process A from right to left. A=[1,0,-6]=[+1,+0,-6]. C[3]=0.'
+        'Len(A)=3. A=[+1,+0,-6]. A[3]=-6. Since -6<0, B=10, C[2]=-1. Since C[3]=0, thus -6+10+0=4. Len(ANEW)=1. ANEW=[4]. C[2]=-1. Len(A)=2. A=[+1,+0]. A[2]=+0. Since +0 is 0, B=0, C[1]=0. Since C[2]=-1, thus 0+0-1=-1, which is neg, thus repeat with B=10, C[1]=-1. -1+10+0=9. Len(ANEW)=2. ANEW=[9,4]. C[1]=-1. Len(A)=1. A=[+1]. A[1]=+1. Since +1>0, B=0, C[0]=0. Since C[1]=-1, thus 1+0-1=0. Len(ANEW)=3. ANEW=[0,9,4]. C[0]=0. Len(A)=0. A=[]. Since A is empty, the problem is complete. The final Answer is [0,9,4].'
+    ),
     # (
     #     '128*367=',
     #     '128*367=128*(300+60+7)\n128*367=128*300+128*60+128*7\n128*367=38400+7680+896\n128*367=46976\nnSo, 128*367=46976. The answer is 46976.'
@@ -135,25 +135,7 @@ def nshot_chats(n: int, question: str) -> dict:
     chats.append({"role": "user", "content": question_prompt(question)})
     return chats
 
-def nshot_chats_taril(n: int, question: str) -> dict:
-    def question_prompt(s):
-        return f'Question: {s}'
 
-    def answer_prompt(s):
-        return f"Answer:\n{s}"
-
-    chats = [
-        {"role": "system", "content": "Your task is to solve a series of math word problems by providing the final answer. Use the format #### [value] to highlight your answer. For example, if the answer is 560, you should write #### 560. Make sure there always an #### [value] at the end, and don't add any extra things behind ####, just the answer number. If the calculation is easy, do it directly and use <NONALGO> at the top of the answer. If the calculation calculates more bits or is more difficult, calculate it using the algorithm I gave you and put <ALGO> at the front of the question. It is recommended to use this algorithm only for addition!"}
-    ]
-
-    for q, a in gsm8k_learning[:n]:
-        chats.append(
-            {"role": "user", "content": question_prompt(q)})
-        chats.append(
-            {"role": "assistant", "content": answer_prompt(a)})
-
-    chats.append({"role": "user", "content": question_prompt(question)})
-    return chats
 
 if __name__ == '__main__':
 
