@@ -1,7 +1,7 @@
 import json
 import re
 
-
+from tqdm import tqdm
 
 
 def is_number(s):
@@ -66,19 +66,23 @@ def convert(output:str):
 def acc_eval(output:str,ans:str, acc_num:int, total_num:int, default = True):
     if default:
         print("No.",total_num,sep="",end=":")
+        # tqdm.write("No.{}".format(total_num))
     # output= extract_ans_from_response(output)
     output = convert(output)
     # ans= extract_ans_from_response(ans)
     ans = convert(ans)
     if default:
         print(ans, "-", output,end="  ")
+        # tqdm.write(f"{ans}-{output}")
     if ans == output:
         if default:
             print((acc_num+1)/total_num,end=" ")
+            # tqdm.write(f"{(acc_num+1)/total_num}")
         return True
     else:
         if default:
             print(acc_num/total_num,end=" ")
+            # tqdm.write(f"{(acc_num)/total_num}")
         return False
 
 # compare each answer
@@ -131,8 +135,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('SP_fewshot_prompt_improved_v1.jsonl','test.jsonl')
-    token_and_time_eval('SP_fewshot_prompt_improved_v1.jsonl')
+    read_and_compare('combine_test_SKic.jsonl','samepled_test.jsonl')
+    token_and_time_eval('combine_test_SKic.jsonl')
 
 
 # if __name__ == '__main__':

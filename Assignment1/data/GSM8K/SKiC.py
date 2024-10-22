@@ -1,7 +1,9 @@
 import json
 import time
+from idlelib.configdialog import changes
 
 from openai import OpenAI
+from tqdm import tqdm
 
 from Assignment1.data.GSM8K.evaluation import acc_eval
 
@@ -108,6 +110,7 @@ def organize_prompt(n: int = 5, question: str = "") -> dict:
     return chats
 
 def request(client,msg ):
+
     try:
         completion = client.chat.completions.create(
             model="Meta-Llama-3.1-8B-Instruct",
@@ -115,6 +118,7 @@ def request(client,msg ):
             stream=True,
             stream_options = {"include_usage": True},
             stop="#### [value]"
+            # temperature=0.75
         )
         full_response = ""
         for chunk in completion:
@@ -130,14 +134,15 @@ def request(client,msg ):
         time.sleep(0.3)
     except Exception as e:
         print(f"An error occurred: {e}")
-        print("Sleeping for 10 seconds...")
-        time.sleep(20)
+        print("change api")
+        change_api()
         completion = client.chat.completions.create(
             model="Meta-Llama-3.1-8B-Instruct",
             messages=msg,
             stream=True,
             stream_options = {"include_usage": True},
             stop="#### [value]"
+            # temperature=0.75
         )
         full_response = ""
         for chunk in completion:
@@ -152,6 +157,14 @@ def request(client,msg ):
                 full_response += delta.content
         time.sleep(0.3)
     return full_response,prompt_tokens,completion_tokens,current_tokens,time_latency
+client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
+
+def change_api():
+    global client
+    if client.api_key == "5bd891fa-0f99-4f8c-8166-659ae73f3f35":
+        client.api_key = "f855bbcc-3914-4107-9386-7647d3c1f31c"
+    else:
+        client.api_key = "5bd891fa-0f99-4f8c-8166-659ae73f3f35"
 
 
 if __name__ == '__main__':
@@ -159,18 +172,26 @@ if __name__ == '__main__':
     acc_num=0
 
     client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SKiC.jsonl', 'a', encoding="utf-8") as output_file:
+    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SKiC_n=4_T=0.75.jsonl', 'a', encoding="utf-8") as output_file:
         # for line in f:
-        for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
-            if line_number < 150:                         # change number
+        # for line_number, line in enumerate(tqdm(f, desc="Processing lines", unit="line",total=1319,leave=True)):            # if program break, set the checkpoint and run again
+        #     if line_number < 296:                         # change number
+        #         continue
+        progress_bar = tqdm(total=1319, unit="line", leave=True,dynamic_ncols=True)
+        for line_number, line in enumerate(f):
+            if line_number < 1179:
+                progress_bar.update(1)
                 continue
             total_num+=1
             data=json.loads(line)
-            question = organize_prompt(n=5,question=data['question'])
+            question = organize_prompt(n=4,question=data['question'])
             full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,question)
             if acc_eval(full_response,data['answer'],acc_num,total_num):
                 acc_num+=1
-            print(f'prompt_tokens: {prompt_tokens},completion_tokens: {completion_tokens},total_tokens:{current_tokens},time_latency: {time_latency}')
+            # print(f'prompt_tokens: {prompt_tokens},completion_tokens: {completion_tokens},total_tokens:{current_tokens},time_latency: {time_latency}')
+            tqdm.write(f'prompt_tokens: {prompt_tokens}, completion_tokens: {completion_tokens}, '
+                       f'time_latency: {time_latency}')
+
             output_data = {
                 "question": data['question'],
                 "answer": full_response,
@@ -185,3 +206,4 @@ if __name__ == '__main__':
                           "things behind ####, just the answer number"
             }
             output_file.write(json.dumps(output_data) + "\n")
+            progress_bar.update(1)

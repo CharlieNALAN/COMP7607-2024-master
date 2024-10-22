@@ -3,6 +3,7 @@ import time
 
 from openai import OpenAI
 
+from Assignment1.data.GSM8K.SKiC import change_api
 from Assignment1.data.GSM8K.baseline import nshot_chats
 from Assignment1.data.GSM8K.evaluation import convert, acc_eval
 
@@ -40,29 +41,58 @@ system_prompt_content = [
 
 def generate_one_new_question(question, client , times):
 
-    completion = client.chat.completions.create(
-        model="Meta-Llama-3.1-8B-Instruct",
-        messages=[
-            {"role": "system", "content": system_prompt_content[times-1]},
-            {"role": "user", "content": question},
-        ],
-        stream=True,
-        stream_options = {"include_usage": True}
+    try:
 
-    )
-    full_response = ""
-    for chunk in completion:
-        if chunk.usage is not None:
-            prompt_tokens = chunk.usage.prompt_tokens
-            completion_tokens = chunk.usage.completion_tokens
-            current_tokens = chunk.usage.total_tokens
-            time_latency = chunk.usage.model_extra['total_latency']
-            break
-        delta = chunk.choices[0].delta
-        if hasattr(delta, 'content'):
-            full_response += delta.content
-    # print("new problem:{}".format(full_response))
-    time.sleep(0.3)
+        completion = client.chat.completions.create(
+            model="Meta-Llama-3.1-8B-Instruct",
+            messages=[
+                {"role": "system", "content": system_prompt_content[times-1]},
+                {"role": "user", "content": question},
+            ],
+            stream=True,
+            stream_options = {"include_usage": True}
+
+        )
+        full_response = ""
+        for chunk in completion:
+            if chunk.usage is not None:
+                prompt_tokens = chunk.usage.prompt_tokens
+                completion_tokens = chunk.usage.completion_tokens
+                current_tokens = chunk.usage.total_tokens
+                time_latency = chunk.usage.model_extra['total_latency']
+                break
+            delta = chunk.choices[0].delta
+            if hasattr(delta, 'content'):
+                full_response += delta.content
+        # print("new problem:{}".format(full_response))
+        time.sleep(0.3)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        change_api()
+        completion = client.chat.completions.create(
+            model="Meta-Llama-3.1-8B-Instruct",
+            messages=[
+                {"role": "system", "content": system_prompt_content[times-1]},
+                {"role": "user", "content": question},
+            ],
+            stream=True,
+            stream_options = {"include_usage": True}
+
+        )
+        full_response = ""
+        for chunk in completion:
+            if chunk.usage is not None:
+                prompt_tokens = chunk.usage.prompt_tokens
+                completion_tokens = chunk.usage.completion_tokens
+                current_tokens = chunk.usage.total_tokens
+                time_latency = chunk.usage.model_extra['total_latency']
+                break
+            delta = chunk.choices[0].delta
+            if hasattr(delta, 'content'):
+                full_response += delta.content
+        # print("new problem:{}".format(full_response))
+        time.sleep(0.3)
+
     return full_response,prompt_tokens,completion_tokens,current_tokens,time_latency
 
 
@@ -116,13 +146,9 @@ if __name__ == '__main__':
             # }
             # output_file.write(json.dumps(output_data) + "\n")
 
-            try:
-                new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,1)
-            except Exception as e:
-                print(f"An error occurred: {e}")
-                print("Sleeping for 10 seconds...")
-                time.sleep(20)
-                new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,1)
+
+            new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,1)
+
 
             cur_prompt_tokens +=prompt_tokens
             cur_completion_tokens +=completion_tokens
@@ -163,13 +189,9 @@ if __name__ == '__main__':
 
 
             else:
-                try:
-                    new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,2)
-                except Exception as e:
-                    print(f"An error occurred: {e}")
-                    print("Sleeping for 20 seconds...")
-                    time.sleep(20)
-                    new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,2)
+
+                new_problem,prompt_tokens,completion_tokens,current_tokens,time_latency = generate_one_new_question(data['question'], client,2)
+
                 zero_shot_prompt = nshot_chats(n=8,question=new_problem)
                 cur_prompt_tokens +=prompt_tokens
                 cur_completion_tokens +=completion_tokens
