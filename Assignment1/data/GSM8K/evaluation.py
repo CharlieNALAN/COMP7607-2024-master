@@ -98,7 +98,7 @@ def read_and_compare(file1, file2):
                 acc_num += 1
         percentage = (acc_num / total_num) * 100
         formatted_output = f"{percentage:.6f}%"
-        print("The overall accuracy of zero shot baseline is:",formatted_output)
+        print("The overall accuracy of this is:",formatted_output)
     with open('{}_interference.txt'.format(file1.split(".")[0]),"a",encoding='utf-8') as f:
         f.write(f"The overall accuracy of baseline is:{formatted_output}\n")
 
@@ -135,8 +135,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('combine_test_SKic.jsonl','samepled_test.jsonl')
-    token_and_time_eval('combine_test_SKic.jsonl')
+    read_and_compare('SP_150_T=2_p=025.jsonl','samepled_test.jsonl')
+    token_and_time_eval('SP_150_T=2_p=025.jsonl')
 
 
 # if __name__ == '__main__':

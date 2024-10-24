@@ -3,7 +3,7 @@ import time
 
 from openai import OpenAI
 
-from Assignment1.data.GSM8K.SKiC import change_api
+
 from Assignment1.data.GSM8K.baseline import nshot_chats
 from Assignment1.data.GSM8K.evaluation import convert, acc_eval
 
@@ -38,6 +38,13 @@ system_prompt_content = [
     "Please rewrite the following mathematical question to be more understandable and easy to answer. Ensure key information are retained, maintain the original meaning, and try to reorder conditions for clarity. Just output the new question, do not provide the answer."
 ]
 
+def change_api():
+    global client
+    if client.api_key == "5bd891fa-0f99-4f8c-8166-659ae73f3f35":
+        client.api_key = "f855bbcc-3914-4107-9386-7647d3c1f31c"
+    else:
+        client.api_key = "5bd891fa-0f99-4f8c-8166-659ae73f3f35"
+
 
 def generate_one_new_question(question, client , times):
 
@@ -50,7 +57,9 @@ def generate_one_new_question(question, client , times):
                 {"role": "user", "content": question},
             ],
             stream=True,
-            stream_options = {"include_usage": True}
+            stream_options = {"include_usage": True},
+            temperature= 2,
+            top_p= 0
 
         )
         full_response = ""
@@ -76,7 +85,9 @@ def generate_one_new_question(question, client , times):
                 {"role": "user", "content": question},
             ],
             stream=True,
-            stream_options = {"include_usage": True}
+            stream_options = {"include_usage": True},
+            temperature= 2,
+            top_p= 0
 
         )
         full_response = ""
@@ -106,10 +117,10 @@ if __name__ == '__main__':
     total_time=0
 
     client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP_fewshot_prompt_improved_v1.jsonl', 'a', encoding="utf-8") as output_file:
+    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SP.jsonl', 'a', encoding="utf-8") as output_file:
         # for line in f:
         for line_number, line in enumerate(f):            # if program break, set the checkpoint and run again
-            if line_number < 1098:
+            if line_number < 0:
                 continue
             total_num+=1
 
@@ -125,8 +136,8 @@ if __name__ == '__main__':
                 full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
             except Exception as e:
                 print(f"An error occurred: {e}")
-                print("Sleeping for 10 seconds...")
-                time.sleep(20)
+                print("change api")
+                change_api()
                 full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
 
             cur_prompt_tokens +=prompt_tokens
@@ -160,8 +171,8 @@ if __name__ == '__main__':
                 full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
             except Exception as e:
                 print(f"An error occurred: {e}")
-                print("Sleeping for 20 seconds...")
-                time.sleep(20)
+                print("change api")
+                change_api()
                 full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
 
             ans2 = convert(full_response)
@@ -201,8 +212,8 @@ if __name__ == '__main__':
                     full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
                 except Exception as e:
                     print(f"An error occurred: {e}")
-                    print("Sleeping for 20 seconds...")
-                    time.sleep(20)
+                    print("change api")
+                    change_api()
                     full_response,prompt_tokens,completion_tokens,current_tokens,time_latency = request(client,zero_shot_prompt)
                 ans3 = convert(full_response)
                 cur_prompt_tokens +=prompt_tokens

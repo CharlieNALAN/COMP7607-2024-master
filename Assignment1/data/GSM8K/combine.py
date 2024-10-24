@@ -82,7 +82,7 @@ if __name__ == '__main__':
     with open('test.jsonl', 'r', encoding="utf-8") as f,open('combine_test_origin.jsonl', 'a', encoding="utf-8") as output_file1,open('combine_test_SKic.jsonl', 'a', encoding="utf-8") as output_file2:
         progress_bar = tqdm(total=1319, unit="line", leave=True,dynamic_ncols=True)
         for line_number, line in enumerate(f):
-            if line_number <411:
+            if line_number <1182:
                 progress_bar.update(1)
                 continue
 
@@ -161,6 +161,7 @@ if __name__ == '__main__':
             }
             output_file1.write(json.dumps(output_data1)+"\n")
             output_file2.write(json.dumps(output_data2)+"\n")
+            time.sleep(0.5)
             print()
             progress_bar.update(1)
 
