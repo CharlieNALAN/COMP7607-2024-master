@@ -1,0 +1,5 @@
+The overall accuracy of baseline is:68.000000%
+Average Wall-Clock Time per Question: 0.3430 seconds
+Average Number of Total Tokens per Question: 2544.1000
+Average Number of Completion Tokens per Question: 251.2467
+Average Number of Prompt Tokens per Question: 2292.8533

@@ -117,8 +117,9 @@ def request(client,msg ):
             messages=msg,
             stream=True,
             stream_options = {"include_usage": True},
-            stop="#### [value]"
-            # temperature=0.75
+            stop="#### [value]",
+            temperature=2,
+            top_p=0.5
         )
         full_response = ""
         for chunk in completion:
@@ -141,8 +142,10 @@ def request(client,msg ):
             messages=msg,
             stream=True,
             stream_options = {"include_usage": True},
-            stop="#### [value]"
-            # temperature=0.75
+            stop="#### [value]",
+            temperature=2,
+            top_p=0.5
+
         )
         full_response = ""
         for chunk in completion:
@@ -172,14 +175,14 @@ if __name__ == '__main__':
     acc_num=0
 
     client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
-    with open('test.jsonl', 'r', encoding="utf-8") as f,open('SKiC_n=4_T=0.75.jsonl', 'a', encoding="utf-8") as output_file:
+    with open('samepled_test.jsonl', 'r', encoding="utf-8") as f,open('SKiC_150_T=2_p=05.jsonl', 'a', encoding="utf-8") as output_file:
         # for line in f:
         # for line_number, line in enumerate(tqdm(f, desc="Processing lines", unit="line",total=1319,leave=True)):            # if program break, set the checkpoint and run again
         #     if line_number < 296:                         # change number
         #         continue
-        progress_bar = tqdm(total=1319, unit="line", leave=True,dynamic_ncols=True)
+        progress_bar = tqdm(total=150, unit="line", leave=True,dynamic_ncols=True)
         for line_number, line in enumerate(f):
-            if line_number < 1179:
+            if line_number < 35:
                 progress_bar.update(1)
                 continue
             total_num+=1
