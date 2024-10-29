@@ -135,8 +135,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('SKiC_150_T=2_p=05.jsonl','samepled_test.jsonl')
-    token_and_time_eval('SKiC_150_T=2_p=05.jsonl')
+    read_and_compare('combine_test_SKic_optimization.jsonl','test.jsonl')
+    token_and_time_eval('combine_test_SKic_optimization.jsonl')
 
 
 # if __name__ == '__main__':

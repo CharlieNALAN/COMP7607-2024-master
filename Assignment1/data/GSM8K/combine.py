@@ -5,10 +5,13 @@ from openai import OpenAI
 from tqdm import tqdm
 
 from Assignment1.data.GSM8K.SKiC import organize_prompt
-from Assignment1.data.GSM8K.SP import generate_one_new_question
+
 from Assignment1.data.GSM8K.baseline import nshot_chats
 from Assignment1.data.GSM8K.evaluation import convert, acc_eval
-
+system_prompt_content = [
+    "Please rewrite the following mathematical question to be more understandable and easy to answer. Ensure all numbers and key information are retained, and maintain the original meaning. Just output the new question, do not provide the answer.",
+    "Please rewrite the following mathematical question to be more understandable and easy to answer. Ensure key information are retained, maintain the original meaning, and try to reorder conditions for clarity. Just output the new question, do not provide the answer."
+]
 client = OpenAI(base_url="https://api.sambanova.ai/v1", api_key="5bd891fa-0f99-4f8c-8166-659ae73f3f35")
 
 def statistic():
@@ -17,6 +20,68 @@ def statistic():
     cur_completion_tokens +=completion_tokens
     cur_tokens +=current_tokens
     cur_time_latency +=time_latency
+
+def generate_one_new_question(question, client , times):
+
+    try:
+
+        completion = client.chat.completions.create(
+            model="Meta-Llama-3.1-8B-Instruct",
+            messages=[
+                {"role": "system", "content": system_prompt_content[times-1]},
+                {"role": "user", "content": question},
+            ],
+            stream=True,
+            stream_options = {"include_usage": True},
+            temperature= 0.5,
+            top_p= 1
+
+        )
+        full_response = ""
+        for chunk in completion:
+            if chunk.usage is not None:
+                prompt_tokens = chunk.usage.prompt_tokens
+                completion_tokens = chunk.usage.completion_tokens
+                current_tokens = chunk.usage.total_tokens
+                time_latency = chunk.usage.model_extra['total_latency']
+                break
+            delta = chunk.choices[0].delta
+            if hasattr(delta, 'content'):
+                full_response += delta.content
+        # print("new problem:{}".format(full_response))
+        time.sleep(0.3)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        change_api()
+        completion = client.chat.completions.create(
+            model="Meta-Llama-3.1-8B-Instruct",
+            messages=[
+                {"role": "system", "content": system_prompt_content[times-1]},
+                {"role": "user", "content": question},
+            ],
+            stream=True,
+            stream_options = {"include_usage": True},
+            temperature= 0.5,
+            top_p= 1
+
+        )
+        full_response = ""
+        for chunk in completion:
+            if chunk.usage is not None:
+                prompt_tokens = chunk.usage.prompt_tokens
+                completion_tokens = chunk.usage.completion_tokens
+                current_tokens = chunk.usage.total_tokens
+                time_latency = chunk.usage.model_extra['total_latency']
+                break
+            delta = chunk.choices[0].delta
+            if hasattr(delta, 'content'):
+                full_response += delta.content
+        # print("new problem:{}".format(full_response))
+        time.sleep(0.3)
+
+    return full_response,prompt_tokens,completion_tokens,current_tokens,time_latency
+
+
 def request(client,msg ):
 
     try:
@@ -25,8 +90,9 @@ def request(client,msg ):
             messages=msg,
             stream=True,
             stream_options = {"include_usage": True},
-            stop="#### [value]"
-            # temperature=0.75
+            stop="#### [value]",
+            temperature= 0.5,
+            top_p= 1
         )
         full_response = ""
         for chunk in completion:
@@ -49,8 +115,9 @@ def request(client,msg ):
             messages=msg,
             stream=True,
             stream_options = {"include_usage": True},
-            stop="#### [value]"
-            # temperature=0.75
+            stop="#### [value]",
+            temperature= 0.5,
+            top_p= 1
         )
         full_response = ""
         for chunk in completion:
@@ -79,10 +146,10 @@ if __name__ == '__main__':
     acc_num=0
 
 
-    with open('test.jsonl', 'r', encoding="utf-8") as f,open('combine_test_origin.jsonl', 'a', encoding="utf-8") as output_file1,open('combine_test_SKic.jsonl', 'a', encoding="utf-8") as output_file2:
+    with open('test.jsonl', 'r', encoding="utf-8") as f,open('combine_test_origin_optimization.jsonl', 'a', encoding="utf-8") as output_file1,open('combine_test_SKic_optimization.jsonl', 'a', encoding="utf-8") as output_file2:
         progress_bar = tqdm(total=1319, unit="line", leave=True,dynamic_ncols=True)
         for line_number, line in enumerate(f):
-            if line_number <1182:
+            if line_number < 1298:
                 progress_bar.update(1)
                 continue
 
