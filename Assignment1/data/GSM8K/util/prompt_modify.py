@@ -18,6 +18,21 @@ def modify_information(file, attribute, content):
         for line in modified_lines:
             f.write(line + '\n')
 
+def add_attribute(file, attribute, content):
+    with open(file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+
+    modified_lines = []
+    for line in lines:
+        data = json.loads(line)
+        data[attribute] = content
+        modified_lines.append(json.dumps(data))
+
+    with open(file, 'w', encoding='utf-8') as f:
+        for line in modified_lines:
+            f.write(line + '\n')
+
 if __name__ == '__main__':
-    files = "../SKiC_n=4.jsonl"
-    modify_information(files,"prompt","Your task is to solve math word problems using the provided skills. These skills are just references; feel free to create your own skills as needed. Format your answer as #### [value] at the end, without any extra text.")
+    file="../fewshot.baseline.jsonl"
+    add_attribute(file, "prompt", "Your task is to solve a series of math word problems by providing the final answer. Use the format #### [value] to highlight your answer. For example, if the answer is 560, you should write #### 560. Make sure there always an #### [value] at the end, and don't add any extra things behind ####, just the answer number")

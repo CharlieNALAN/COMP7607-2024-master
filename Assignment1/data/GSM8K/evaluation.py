@@ -135,8 +135,8 @@ def token_and_time_eval(file):
 
 
 if __name__ == '__main__':
-    read_and_compare('combine_test_SKic_optimization.jsonl','test.jsonl')
-    token_and_time_eval('combine_test_SKic_optimization.jsonl')
+    read_and_compare('PQ_CoT_no_coherence_for_bridging_object.jsonl','random_sampled_test.jsonl')
+    token_and_time_eval('PQ_CoT_no_coherence_for_bridging_object.jsonl')
 
 
 # if __name__ == '__main__':
